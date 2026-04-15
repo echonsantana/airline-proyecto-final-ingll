@@ -62,7 +62,7 @@ async function cargarReservas() {
     return;
   }
 
-  // Obtener reservas de la base de datos
+  // Obtener reservas de la base de datos (confirmadas)
   const reservasBD = await supabaseService.obtenerReservasByUser(user.id);
   console.log('📦 Reservas BD:', reservasBD);
   
@@ -74,44 +74,60 @@ async function cargarReservas() {
   } catch (error) {
     console.error('Error obteniendo reservas pendientes:', error);
   }
-  
-  let reservaPendiente = reservasPendientes.length > 0 ? reservasPendientes[0] : null;
 
-  // Si no hay reservas en BD ni pendiente
-  if (reservasBD.length === 0 && !reservaPendiente) {
+  // Si no hay reservas en BD ni pendientes
+  if (reservasBD.length === 0 && reservasPendientes.length === 0) {
     container.innerHTML = '<div class="alert alert-info">No tienes reservas</div>';
     return;
   }
 
   let html = '';
 
-  // Mostrar reserva pendiente primero (si existe)
-  if (reservaPendiente) {
-    html += `
-      <div class="card mb-3 border-warning">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="text-warning">⏳ RESERVA PENDIENTE DE PAGO</h6>
-              <small>Código: ${reservaPendiente.codigo || 'Pendiente'}</small><br>
-              <small>Vuelo ID: ${reservaPendiente.vueloId}</small><br>
-              <small>Asientos: ${reservaPendiente.asientos?.join(', ') || 'N/A'}</small><br>
-              <small class="fw-bold">Total: $${reservaPendiente.total}</small>
-            </div>
-            <div class="text-end">
-              <span class="badge bg-warning mb-2">Pendiente</span>
-              <div class="mt-2">
-                <button class="btn btn-sm btn-danger me-1 cancelar-pendiente-btn">Cancelar</button>
-                <button class="btn btn-sm btn-success pagar-pendiente-btn">Pagar</button>
+  // ========== MOSTRAR TODAS LAS RESERVAS PENDIENTES ==========
+  if (reservasPendientes.length > 0) {
+    reservasPendientes.forEach(pendiente => {
+      // Calcular tiempo restante para expiración
+      const tiempoRestante = Math.max(0, new Date(pendiente.expira) - new Date());
+      const minutosRestantes = Math.floor(tiempoRestante / 60000);
+      const segundosRestantes = Math.floor((tiempoRestante % 60000) / 1000);
+      
+      html += `
+        <div class="card mb-3 border-warning" data-pendiente-id="${pendiente.id}">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-warning">⏳ RESERVA PENDIENTE DE PAGO</h6>
+                <small>Código: ${pendiente.codigo || pendiente.id.substring(0, 8)}</small><br>
+                <small>Vuelo: ${pendiente.vuelo?.origen || 'N/A'} → ${pendiente.vuelo?.destino || 'N/A'}</small><br>
+                <small>Asientos: ${pendiente.asientos?.join(', ') || 'N/A'}</small><br>
+                <small class="fw-bold">Total: $${pendiente.total}</small>
+                <br><small class="text-muted">⏰ Expira en: ${minutosRestantes}m ${segundosRestantes}s</small>
+              </div>
+              <div class="text-end">
+                <span class="badge bg-warning mb-2">Pendiente</span>
+                <div class="mt-2">
+                  <button class="btn btn-sm btn-danger me-1 cancelar-pendiente-btn" data-id="${pendiente.id}">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                  </button>
+                  <button class="btn btn-sm btn-success pagar-pendiente-btn" 
+                    data-id="${pendiente.id}"
+                    data-clienteid="${pendiente.clienteId}"
+                    data-vueloid="${pendiente.vueloId}"
+                    data-asientos='${JSON.stringify(pendiente.asientos)}'
+                    data-total="${pendiente.total}"
+                    data-clase="${pendiente.clase}">
+                    <i class="bi bi-credit-card"></i> Pagar
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
+    });
   }
 
-  // Mostrar reservas de la base de datos
+  // ========== MOSTRAR RESERVAS DE LA BASE DE DATOS ==========
   if (reservasBD.length > 0) {
     reservasBD.forEach(r => {
       const estado = r.estado || 'confirmada';
@@ -127,13 +143,14 @@ async function cargarReservas() {
                 <small>${r.vuelo?.origen || ''} → ${r.vuelo?.destino || ''}</small><br>
                 <small>Asientos: ${r.asientos?.join(', ') || 'N/A'}</small><br>
                 <small class="fw-bold">Total: $${r.total}</small>
+                <br><small class="text-muted">Fecha: ${new Date(r.fecha).toLocaleDateString()}</small>
               </div>
               <div class="text-end">
                 <span class="badge bg-${getBadgeColor(estado)} mb-2">${estado.toUpperCase()}</span>
                 <div class="mt-2">
-                  ${puedeCancelar ? `<button class="btn btn-sm btn-danger me-1 cancelar-btn" data-id="${r.id}">Cancelar</button>` : ''}
-                  ${puedePagar ? `<button class="btn btn-sm btn-success pagar-btn" data-id="${r.id}" data-monto="${r.total}">Pagar</button>` : ''}
-                  ${estado === 'pagada' ? '<span class="badge bg-success">Pagado</span>' : ''}
+                  ${puedeCancelar ? `<button class="btn btn-sm btn-danger me-1 cancelar-btn" data-id="${r.id}"><i class="bi bi-x-circle"></i> Cancelar</button>` : ''}
+                  ${puedePagar ? `<button class="btn btn-sm btn-success pagar-btn" data-id="${r.id}" data-monto="${r.total}"><i class="bi bi-credit-card"></i> Pagar</button>` : ''}
+                  ${estado === 'pagada' ? '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Pagado</span>' : ''}
                 </div>
               </div>
             </div>
@@ -145,29 +162,37 @@ async function cargarReservas() {
 
   container.innerHTML = html;
 
-  // Evento para cancelar reserva pendiente (Supabase)
-  const cancelarPendienteBtn = document.querySelector('.cancelar-pendiente-btn');
-  if (cancelarPendienteBtn && reservaPendiente) {
-    cancelarPendienteBtn.addEventListener('click', async () => {
-      await supabaseService.eliminarReservaPendiente(reservaPendiente.id);
-      showToast('Reserva cancelada', 'warning');
-      cargarReservas();
+  // ========== EVENTOS PARA CANCELAR RESERVAS PENDIENTES ==========
+  document.querySelectorAll('.cancelar-pendiente-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const reservaId = btn.dataset.id;
+      if (!reservaId) return;
+      
+      if (confirm('¿Cancelar esta reserva pendiente?')) {
+        await supabaseService.eliminarReservaPendiente(reservaId);
+        showToast('Reserva cancelada', 'warning');
+        cargarReservas();
+      }
     });
-  }
+  });
 
-  // Evento para pagar reserva pendiente (Supabase)
-  const pagarPendienteBtn = document.querySelector('.pagar-pendiente-btn');
-  if (pagarPendienteBtn && reservaPendiente) {
-    pagarPendienteBtn.addEventListener('click', async () => {
+  // ========== EVENTOS PARA PAGAR RESERVAS PENDIENTES ==========
+  document.querySelectorAll('.pagar-pendiente-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const data = btn.dataset;
+      
       try {
         showToast('Procesando pago...', 'info');
         
+        // Crear la reserva en BD
         const resultado = await crearReserva({
-          clienteId: reservaPendiente.clienteId,
-          vueloId: reservaPendiente.vueloId,
-          asientos: reservaPendiente.asientos,
-          total: reservaPendiente.total,
-          clase: reservaPendiente.clase
+          clienteId: data.clienteid,
+          vueloId: data.vueloid,
+          asientos: JSON.parse(data.asientos),
+          total: parseFloat(data.total),
+          clase: data.clase
         });
         
         if (!resultado?.ok || !resultado?.reserva?.id) {
@@ -176,17 +201,19 @@ async function cargarReservas() {
         
         const nuevaReservaId = resultado.reserva.id;
         
+        // Registrar el pago
         const { error: pagoError } = await supabase
           .from('pagos')
           .insert([{
             reserva_id: nuevaReservaId,
-            monto: reservaPendiente.total,
+            monto: parseFloat(data.total),
             metodo: 'tarjeta',
             estado: 'completado'
           }]);
         
         if (pagoError) throw pagoError;
         
+        // Actualizar estado de la reserva
         const { error: reservaError } = await supabase
           .from('reservas')
           .update({ estado: 'pagada' })
@@ -194,43 +221,51 @@ async function cargarReservas() {
         
         if (reservaError) throw reservaError;
         
-        await supabaseService.eliminarReservaPendiente(reservaPendiente.id);
+        // Eliminar reserva pendiente
+        await supabaseService.eliminarReservaPendiente(data.id);
         
         showToast('✅ Reserva y pago completados', 'success');
         cargarReservas();
         
       } catch (error) {
         console.error('Error:', error);
-        showToast('Error al procesar el pago', 'danger');
-      }
-    });
-  }
-
-  // Eventos para cancelar reservas de BD
-  document.querySelectorAll('.cancelar-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const id = e.target.dataset.id;
-      if (!id) return;
-      
-      const res = await cancelarReserva(id);
-      if (res.ok) {
-        showToast('Reserva cancelada', 'warning');
-        cargarReservas();
-      } else {
-        showToast('Error al cancelar', 'danger');
+        showToast('Error al procesar el pago: ' + error.message, 'danger');
       }
     });
   });
 
-  // Eventos para pagar reservas de BD
+  // ========== EVENTOS PARA CANCELAR RESERVAS DE BD ==========
+  document.querySelectorAll('.cancelar-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const id = btn.dataset.id;
+      if (!id) return;
+      
+      if (confirm('¿Cancelar esta reserva?')) {
+        const res = await cancelarReserva(id);
+        if (res.ok) {
+          showToast('Reserva cancelada', 'warning');
+          cargarReservas();
+        } else {
+          showToast('Error al cancelar', 'danger');
+        }
+      }
+    });
+  });
+
+  // ========== EVENTOS PARA PAGAR RESERVAS DE BD ==========
   document.querySelectorAll('.pagar-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
-      const id = e.target.dataset.id;
-      const monto = parseFloat(e.target.dataset.monto);
+      e.preventDefault();
+      const id = btn.dataset.id;
+      const monto = parseFloat(btn.dataset.monto);
       
       if (!id) return;
       
       try {
+        showToast('Procesando pago...', 'info');
+        
+        // Registrar pago
         const { error: pagoError } = await supabase
           .from('pagos')
           .insert([{
@@ -242,6 +277,7 @@ async function cargarReservas() {
         
         if (pagoError) throw pagoError;
         
+        // Actualizar reserva
         const { error: reservaError } = await supabase
           .from('reservas')
           .update({ estado: 'pagada' })
@@ -254,16 +290,18 @@ async function cargarReservas() {
         
       } catch (error) {
         console.error('Error:', error);
-        showToast('Error al pagar', 'danger');
+        showToast('Error al pagar: ' + error.message, 'danger');
       }
     });
   });
 }
 
+// Cerrar sesión
 document.getElementById('cerrarSesion').onclick = () => { 
   location.href = 'index.html';
 };
 
+// Inicializar
 cargarReservas();
 </script>
 </body>
