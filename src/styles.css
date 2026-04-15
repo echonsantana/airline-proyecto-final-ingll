@@ -1,0 +1,820 @@
+:root {
+  --accent: #0b3b8c;
+  --muted: #6b7280;
+}
+/*
+body {
+  background: linear-gradient(180deg, #0a2342 0%, #2a5298 50%, #f4a261 100%);
+  color: white;
+  font-family: "Segoe UI", sans-serif;
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+*/
+
+body {
+  background: linear-gradient(160deg, #ffffff 0%, #f0f4f8 50%, #d9e2ec 100%);
+  min-height: 100vh;
+  color: #1b3a75;
+  font-family: "Segoe UI", sans-serif;
+  background-attachment: fixed;
+}
+/* === NAVBAR === */
+.navbar {
+  background: linear-gradient(90deg, #f1f3f5, #aec3d4, #357188);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+#brand1 {
+    color: rgb(205, 221, 236); /* Color principal del texto */
+    -webkit-text-stroke: 1px #0b3b8c; /* grosor y color del borde */
+    font-weight: 1;
+    font-size: 1.8rem;
+}
+
+.ofertas-titulo {
+    color: #886deb; /* azul profesional */
+    font-weight: 500; /* opcional para resaltar */
+}
+
+
+.navbar-nav .nav-link {
+  font-size: 1.30rem;
+  font-weight: 600;
+  color: #ffffff !important;
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+  text-transform: capitalize;
+  position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffe082 !important;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+#nav-user-area {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+
+
+/* === HERO === */
+.hero {
+  background: linear-gradient(90deg, rgba(11, 59, 140, 0.95), rgba(6, 118, 212, 0.85));
+  color: white;
+  padding: 28px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+
+.search-panel {
+  background: rgba(58, 56, 83, 0.95);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 14px;
+}
+
+.text-illuminated {
+  background: linear-gradient(90deg, #ff6ec4, #7873f5, #42f5b3);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  display: inline-block;
+  animation: floatText 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatText {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+/* === FEATURED SECTION === */
+.featured {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card-flight img {
+  height: 160px;
+  object-fit: cover;
+}
+
+/* === DEPARTURES === */
+.departures-horizontal {
+  width: 100%;
+  background: #000;
+  padding: 25px;
+  border-radius: 15px;
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 25px;
+  overflow-x: auto;
+  white-space: nowrap;
+  height: 200px;
+}
+
+.departures-horizontal h6 {
+  font-size: 1.4rem;
+  min-width: 200px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.departures-horizontal-wrapper {
+  overflow: hidden;          /* Oculta scroll */
+  position: relative;
+  width: 100%;
+}
+/* tableroSmall */
+
+#sideDepartures {
+  background: rgba(1, 17, 24, 0.8);
+  padding: 15px;
+  border-radius: 12px;
+  color: rgb(255, 255, 255);
+  height: 400px; /* altura fija */
+  overflow: hidden; /* el contenedor no se expande */
+  position: relative;
+}
+
+#tableroSmall {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  animation: scrollFlightsVertical 30s linear infinite;
+}
+
+#tableroSmall:hover {
+  animation-play-state: paused; /* pausa al pasar el mouse */
+}
+
+#tableroSmall > div {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+/* Animación vertical infinita */
+@keyframes scrollFlightsVertical {
+  0% { top: 100%; }
+  100% { top: -100%; }
+}
+
+/* tableroSmall */
+
+/* === SISTEMA DE ASIENTOS POR CLASE === */
+.seat-layout {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.seat-row {
+  gap: 8px;
+}
+
+.row-number {
+  width: 30px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.seat {
+  width: 45px;
+  height: 45px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.seat.available {
+  background-color: #d4edda;
+  border-color: #28a745;
+  color: #155724;
+}
+
+.seat.available:hover {
+  background-color: #c3e6cb;
+  transform: scale(1.05);
+}
+
+.seat.selected {
+  background-color: #007bff;
+  border-color: #0056b3;
+  color: white;
+  transform: scale(1.1);
+}
+
+.seat.occupied {
+  background-color: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.seat.unavailable {
+  background-color: #6c757d;
+  border-color: #495057;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.aisle-spacer {
+  width: 40px;
+}
+
+.aisle-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.aisle-line {
+  flex: 1;
+  height: 2px;
+  background-color: #6c757d;
+}
+
+.cockpit {
+  padding: 10px;
+}
+
+.cockpit-shape {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px 20px 0 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.seat-legend {
+  font-size: 0.8rem;
+}
+
+.airplane-cabin {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 20px;
+  border: 2px solid #dee2e6;
+}
+
+.flight-info {
+  border-left: 4px solid #007bff;
+}
+
+.selected-seats-summary {
+  background: linear-gradient(135deg, #17a2b8, #138496) !important;
+}
+
+/* === SISTEMA DE CLASES PREMIUM === */
+.clase-selector {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.clase-option {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 5px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.clase-option:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.clase-option.selected {
+  border-color: currentColor;
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.02);
+}
+
+.clase-economica { 
+  color: #28a745; 
+  border-left: 4px solid #28a745; 
+}
+
+.clase-economicaPlus { 
+  color: #17a2b8; 
+  border-left: 4px solid #17a2b8; 
+}
+
+.clase-business { 
+  color: #ffc107; 
+  border-left: 4px solid #ffc107; 
+}
+
+.clase-primera { 
+  color: #dc3545; 
+  border-left: 4px solid #dc3545; 
+}
+
+.clase-caracteristicas {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Mapa del avión */
+.aircraft-model {
+  perspective: 1000px;
+  margin: 20px 0;
+}
+
+.aircraft-body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  height: 120px;
+  border-radius: 50% 50% 0 0;
+  position: relative;
+  margin: 0 auto;
+  width: 80%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cabin-sections {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -30px;
+  position: relative;
+  z-index: 2;
+}
+
+.cabin-section {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+}
+
+.section-label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.section-primera .section-label { 
+  background: #dc3545; 
+  color: white; 
+}
+
+.section-business .section-label { 
+  background: #ffc107; 
+  color: black; 
+}
+
+.section-economica-plus .section-label { 
+  background: #17a2b8; 
+  color: white; 
+}
+
+.section-economica .section-label { 
+  background: #28a745; 
+  color: white; 
+}
+
+/* Mapa de asientos 3D */
+.seat-map-3d {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.overhead-bins {
+  background: linear-gradient(180deg, #8B4513, #A0522D);
+  height: 20px;
+  border-radius: 5px 5px 0 0;
+  margin-bottom: 30px;
+  position: relative;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.overhead-bins::after {
+  content: "COMPARTIMIENTOS SUPERIORES";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Asientos premium */
+.seat.premium {
+  background: linear-gradient(135deg, #ffc107, #ff8c00);
+  color: black;
+  font-weight: bold;
+  border: 2px solid #ff8c00;
+}
+
+.seat.primera-clase {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  border: 2px solid #c82333;
+}
+
+.seat.business-class {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: black;
+  border: 2px solid #e0a800;
+}
+
+.seat.economica-plus {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  color: white;
+  border: 2px solid #138496;
+}
+
+.seat.emergency-exit {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  color: white;
+  position: relative;
+  border: 2px solid #c82333;
+}
+
+.seat.emergency-exit::after {
+  content: "🚪";
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 0.6rem;
+}
+
+/* Sistema de puntos */
+.points-system {
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.points-display {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.points-progress {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.points-progress-bar {
+  height: 100%;
+  background: white;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Resumen de selección */
+.selection-summary {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 15px 0;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.selection-summary h6 {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.price-breakdown {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* === MODALES PERSONALIZADOS === */
+.modal-content {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.3s ease-in-out;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0a2342 0%, #1b3a75 50%, #2a5298 100%);
+  color: #fff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  border-bottom: none;
+  background: linear-gradient(90deg, #0074d9, #0b3b8c);
+  color: #fff;
+  padding: 1rem 1.5rem;
+}
+
+.modal-title {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.modal-body {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  padding: 1.5rem;
+}
+
+.modal-body .form-control {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 0.6rem;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.modal-body .form-control:focus {
+  border-color: #f4a261;
+  box-shadow: 0 0 0 0.25rem rgba(244, 162, 97, 0.25);
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.modal-body .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.btn {
+  border-radius: 0.6rem;
+  font-weight: 500;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #0074d9, #0b3b8c);
+  border: none;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #1ba1e2, #0074d9);
+  border: none;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #2a5298);
+  border: none;
+}
+
+.modal-body a {
+  color: #f4a261;
+  text-decoration: none;
+}
+
+.modal-body a:hover {
+  text-decoration: underline;
+}
+
+/* === ESTILOS DE PAGOS === */
+#formPagoContainer .card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#formPagoContainer .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+#formPagoContainer input,
+#formPagoContainer select {
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 15px;
+}
+
+#formPagoContainer label {
+  font-weight: 600;
+  color: #003366;
+}
+
+#formPagoContainer button {
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+
+#formPagoContainer button:hover {
+  background-color: #0056b3;
+}
+
+/* === TABLAS === */
+#contenidoVuelos {
+  margin-top: 1.5rem;
+}
+
+#contenidoVuelos table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(0,0,0,0.3);
+  color: white;
+}
+
+#contenidoVuelos th, 
+#contenidoVuelos td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+  text-align: center;
+}
+
+#contenidoVuelos th {
+  background-color: #0d6efd;
+  color: white;
+}
+
+#contenidoVuelos tr:nth-child(even) {
+  background-color: rgba(255,255,255,0.05);
+}
+
+#contenidoVuelos tr:hover {
+  background-color: rgba(255,255,255,0.15);
+  transition: background-color 0.2s;
+}
+
+.table-striped tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.btn-reservar {
+  min-width: 90px;
+}
+
+/* === CONTENEDORES PRINCIPALES === */
+#contenidoPrincipal {
+  max-height: 600px;
+  overflow-y: auto;
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+#contenidoPrincipal.tabla-activa {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+/* === BADGES DE ESTADO === */
+.status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.status-on-time { background: #28a745; color: white; }
+.status-delayed { background: #ffc107; color: black; }
+.status-cancelled { background: #dc3545; color: white; }
+.status-boarding { background: #17a2b8; color: white; }
+
+/* === ALERTAS === */
+.flight-alert {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 10px 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* === FOOTER === */
+.footer {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 24px;
+  text-align: center;
+}
+
+.list-group-item strong {
+  color: #d9dde2;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 767px) {
+  .featured {
+    flex-direction: column;
+  }
+
+  .card-flight img {
+    height: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .seat {
+    width: 35px;
+    height: 35px;
+    font-size: 0.7rem;
+  }
+  
+  .aisle-spacer {
+    width: 20px;
+  }
+  
+  .row-number {
+    width: 25px;
+    font-size: 0.8rem;
+  }
+
+  .cabin-sections {
+    flex-direction: column;
+  }
+  
+  .cabin-section {
+    margin-bottom: 10px;
+  }
+  
+  .aircraft-body {
+    height: 80px;
+  }
+  
+  .clase-option {
+    padding: 8px;
+  }
+}
+
+
+@media (max-width: 576px) {
+  .modal-content {
+    border-radius: 0.75rem;
+  }
+}
