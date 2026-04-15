@@ -1,9 +1,18 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
 
-
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  base:'https://echonsantana.github.io/airline-proyecto-final-ingll/'
+  root: './',
+  base: '/airline-proyecto-final-ingll/',
+
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        reservas: resolve(__dirname, 'reservas.html'),
+        admin: resolve(__dirname, 'admin.html'),
+      }
+    }
+  }
 })
